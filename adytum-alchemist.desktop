@@ -1,0 +1,20 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Adytum Alchemist
+GenericName=Hermetic Planning Engine & Invariant Gatekeeper
+Comment=22-Key Hermetic Ageless Wisdom Planning Rite, Invariant Gatekeeper & AI Model Context Protocol (MCP) Server
+Exec=/usr/local/bin/adytum desktop
+Icon=/media/neo/f2fdda77-178b-4603-ae80-c7aa4cd97908/zoth-micro-repos/adytum-alchemist-ai-workflow/assets/icon.png
+Terminal=false
+Categories=Development;System;Utility;Education;
+StartupNotify=true
+Actions=CLI;Web;
+
+[Desktop Action CLI]
+Name=Open Adytum CLI
+Exec=x-terminal-emulator -e "/usr/local/bin/adytum --help"
+
+[Desktop Action Web]
+Name=Open Web UI (Port 8103)
+Exec=/usr/local/bin/adytum web

@@ -1,8 +1,13 @@
 #!/usr/bin/env node
 import fs from 'node:fs';
 import path from 'node:path';
+import { spawn } from 'node:child_process';
+import { fileURLToPath } from 'node:url';
 import { getAllKeys, getKey, validatePlan, generateProjectInvariants } from '../src/core/adytum.js';
 import { runMcpServer } from '../src/mcp/server.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const GOLD = '\x1b[38;2;212;175;55m';
 const BOLD = '\x1b[1m';
@@ -22,6 +27,8 @@ function printHelp() {
   console.log(`${BOLD}USAGE:${RESET}`);
   console.log(`  adytum <command> [options]\n`);
   console.log(`${BOLD}COMMANDS:${RESET}`);
+  console.log(`  ${CYAN}desktop${RESET}                   Launch the sovereign Electron desktop workstation`);
+  console.log(`  ${CYAN}web${RESET}                       Start the local web server on http://127.0.0.1:8103`);
   console.log(`  ${CYAN}list${RESET}                      List all 22 Ageless Wisdom Keys and Invariants`);
   console.log(`  ${CYAN}key <0-21>${RESET}                Display canonical symbolism and attributes for a Key`);
   console.log(`  ${CYAN}validate <file>${RESET}           Audit a software architecture / plan against the 22 invariants`);
@@ -46,6 +53,65 @@ async function main() {
   if (command === '--version' || command === '-v' || command === 'version') {
     console.log('adytum-alchemist-ai-workflow v1.0.0');
     process.exit(0);
+  }
+
+  if (command === 'web' || command === '--web') {
+    console.log('⚡ Launching Adytum Alchemist Web UI on http://127.0.0.1:8103 ...');
+    const rootDir = path.resolve(__dirname, '..');
+    const child = spawn('node', ['server/serve.js'], {
+      cwd: rootDir,
+      stdio: 'inherit',
+      env: {
+        ...process.env,
+        PORT: '8103',
+        ZOTH_ZERO_EGRESS: 'true',
+      },
+    });
+    return;
+  }
+
+  if (command === 'desktop' || command === 'app' || command === 'gui' || command === '--desktop' || command === '--gui' || command === '--app') {
+    console.log('⚡ Launching Adytum Alchemist Desktop Workstation...');
+    const rootDir = path.resolve(__dirname, '..');
+    const candidateElectronPaths = [
+      path.join(rootDir, 'node_modules', '.bin', 'electron'),
+      '/media/neo/f2fdda77-178b-4603-ae80-c7aa4cd97908/zoth-micro-repos/NullAI-HexStrike-AI-Terminal/node_modules/.bin/electron',
+      '/media/neo/f2fdda77-178b-4603-ae80-c7aa4cd97908/zoth-micro-repos/promptmaster-studio/node_modules/.bin/electron',
+      '/media/neo/f2fdda77-178b-4603-ae80-c7aa4cd97908/zoth-micro-repos/jwt-inspector-guard/node_modules/.bin/electron',
+      '/media/neo/f2fdda77-178b-4603-ae80-c7aa4cd97908/zoth-micro-repos/envguard-secrets-vault/node_modules/.bin/electron',
+    ];
+
+    let electronCmd = 'electron';
+    for (const p of candidateElectronPaths) {
+      if (fs.existsSync(p)) {
+        electronCmd = p;
+        break;
+      }
+    }
+
+    const child = spawn(electronCmd, ['.'], {
+      cwd: rootDir,
+      stdio: 'inherit',
+      env: {
+        ...process.env,
+        ELECTRON_ENABLE_LOGGING: '1',
+        ZOTH_ZERO_EGRESS: 'true',
+      },
+    });
+
+    child.on('error', (err) => {
+      console.warn(`[Adytum] Electron notice: ${err.message}. Starting web UI on port 8103...`);
+      spawn('node', ['server/serve.js'], {
+        cwd: rootDir,
+        stdio: 'inherit',
+        env: {
+          ...process.env,
+          PORT: '8103',
+          ZOTH_ZERO_EGRESS: 'true',
+        },
+      });
+    });
+    return;
   }
 
   if (command === 'mcp') {
