@@ -1,9 +1,14 @@
 {
-  "name": "adytum-alchemist-guide",
-  "private": true,
-  "version": "0.0.0",
+  "name": "adytum-alchemist-ai-workflow",
+  "version": "1.0.0",
+  "description": "22-Key Hermetic Ageless Wisdom Planning Rite, Invariant Gatekeeper & AI Model Context Protocol (MCP) Server",
   "type": "module",
+  "bin": {
+    "adytum": "./bin/adytum.js"
+  },
   "scripts": {
+    "test": "node --test tests/",
+    "adytum": "./bin/adytum.js",
     "dev": "vite --port=3000 --host=0.0.0.0",
     "build": "vite build",
     "preview": "vite preview",
